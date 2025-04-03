@@ -24,7 +24,8 @@ export class RegionsService {
     const region = this.regionRepository.findOneBy({
       regionId: id
     });
-    if (!region) throw new NotFoundException("Region no encontrada")
+    if (!region) throw new NotFoundException("Region no encontrada");
+    return region;
   }
 
   async update(id: number, updateRegionDto: UpdateRegionDto) {
