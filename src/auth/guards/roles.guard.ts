@@ -9,7 +9,6 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    // Reflector == metadata
     const roles = this.reflector.get(Roles, context.getHandler());
     if (!roles) {
       return true;
@@ -18,11 +17,10 @@ export class RolesGuard implements CanActivate {
     const user: User = request.user;
     return this.matchRoles(roles, user.userRoles);
   }
-
   matchRoles(roles: string[], userRoles: string[]){
     let access = false;
-    userRoles.forEach((userRole)=> {
-        if (roles.includes(userRole)) access = true;
+    userRoles.forEach((userRole) =>{
+        if(roles.includes(userRole)) access = true
     })
     return access;
   }

@@ -33,9 +33,14 @@ export class LocationsService {
 
   async update(id: number, updateLocationDto: UpdateLocationDto) {
     // Set manager to null
-    this.managerRepository.createQueryBuilder().update().set({location: undefined}).where("locationId = :id", {
-      id,
+    this.managerRepository
+      .createQueryBuilder()
+      .update()
+      .set({ location: undefined })
+      .where("locationId = :id", {
+        id,
     }).execute();
+
     const location = await this.locationRepository.preload({
       locationId: id,
       ... updateLocationDto,
@@ -48,7 +53,7 @@ export class LocationsService {
       managerId: updateLocationDto.manager,
       location: location,
     })
-    if (!updatedManager) throw new NotFoundException("Location not found");
+    if (!updatedManager) throw new NotFoundException("ManagerUpdate not found");
     this.managerRepository.save(updatedManager);
 
     return savedLocation;

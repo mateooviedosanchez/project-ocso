@@ -24,8 +24,11 @@ export class ManagersService {
   }
 
   findOne(id: string) {
-    const manager = this.managerRepository.findOneBy({
-      managerId: id
+    const manager = this.managerRepository.findOne({
+      where: {managerId: id},
+      relations: {
+        location: true,
+      }
     });
     if (!manager) throw new NotFoundException("No manager found")
       return manager;
@@ -35,7 +38,7 @@ export class ManagersService {
     const managerToUpdate = await this.managerRepository.preload({
       managerId: id,
       ...updateManagerDto,
-      location: updateManagerDto.location as DeepPartial<Location> | undefined,
+      // location: updateManagerDto.location as DeepPartial<Location> | undefined,
     });
     if (!managerToUpdate) throw new BadRequestException();
     return this.managerRepository.save(managerToUpdate)
