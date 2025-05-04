@@ -14,6 +14,6 @@ export class CreateProductDto {
     price: number;
     @IsInt()
     countSeal: number;
-    @IsObject()
-    provider: Provider;
+    @IsString()
+    provider: Provider | string;
 }

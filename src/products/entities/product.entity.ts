@@ -5,15 +5,15 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinColumn } from "
 export class Product {
         @PrimaryGeneratedColumn("uuid")
         productId: string;
-        @Column({type: "text"})
+        @Column({ type: "text" })
         productName: string;
-        @Column({type: "float"})
+        @Column({ type: "float" })
         price: number;
-        @Column({type: "int"})
+        @Column({ type: "int" })
         countSeal: number;
         @ManyToMany(() => Provider, (provider) => provider.products)
         @JoinColumn({
                 name: "providerId"
         })
-        provider: Provider
+        provider: Provider | string;
 }
