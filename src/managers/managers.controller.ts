@@ -11,7 +11,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Managers')
 @Controller('managers')
 export class ManagersController {
-  constructor(private readonly managersService: ManagersService) {}
+  constructor(private readonly managersService: ManagersService) { }
 
   @Auth()
   @Post()
@@ -19,7 +19,7 @@ export class ManagersController {
     return this.managersService.create(createManagerDto);
   }
 
-  @Auth()
+  //@Auth()
   @Get()
   findAll() {
     return this.managersService.findAll();

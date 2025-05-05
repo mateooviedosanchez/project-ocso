@@ -3,7 +3,7 @@ import { Manager } from "src/managers/entities/manager.entity";
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class User{
+export class User {
     @PrimaryGeneratedColumn('uuid')
     userId: string;
     @Column('text', {

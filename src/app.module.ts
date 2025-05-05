@@ -10,6 +10,7 @@ import { LocationsModule } from './locations/locations.module';
 import { RegionsModule } from './regions/regions.module';
 import { AuthModule } from './auth/auth.module';
 import { EXPIRES_IN, JWT_KEY } from './auth/constants/jwt.constants';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { EXPIRES_IN, JWT_KEY } from './auth/constants/jwt.constants';
     synchronize: true,
   }), 
   EmployeesModule, 
-  ProductsModule, ProvidersModule, ManagersModule, LocationsModule, RegionsModule, AuthModule,
+  ProductsModule, ProvidersModule, ManagersModule, LocationsModule, RegionsModule, AuthModule, AwsModule,
 ],
   controllers: [],
   providers: [],
