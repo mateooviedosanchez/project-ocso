@@ -26,6 +26,10 @@ export class CreateEmployeeDto {
 
     @ApiPropertyOptional()
     @IsOptional()
-    @IsObject()
-    location: Location;
+    @IsString()
+    location: Location | string;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    employeePhoto: string;
 }
