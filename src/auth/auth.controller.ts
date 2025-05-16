@@ -9,6 +9,7 @@ import {
   Put,
   Res,
   BadRequestException,
+  Query,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -25,30 +26,18 @@ import { create } from "domain";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post("register/employee/[id]")
-  registerEmployee(
-    @Body() createUserDto: CreateUserDto,
-    @Param("id") id: string
-  ) {
-    if (
-      createUserDto.userRoles.includes("Admin") ||
-      createUserDto.userRoles.includes("Manager")
-    )
-      throw new BadRequestException("Rol invalido");
-    return this.authService.registerEmployee(id, createUserDto);
-  }
-
-  @Post("register/employee/[id]")
+  @Post("register/:id")
   registerManager(
+    @Query("role") role: string,
     @Body() createUserDto: CreateUserDto,
     @Param("id") id: string
   ) {
-    if (
-      createUserDto.userRoles.includes("Admin") ||
-      createUserDto.userRoles.includes("Employee")
-    )
-      throw new BadRequestException("Rol invalido");
-    return this.authService.registerManager(id, createUserDto);
+    if (role === "manager") {
+      return this.authService.registerManager(id, createUserDto);
+    } else if (role === "employee") {
+      return this.authService.registerEmployee(id, createUserDto);
+    }
+    throw new BadRequestException("Rol invalido");
   }
 
   @Post("register/manager")
@@ -68,9 +57,9 @@ export class AuthController {
     return;
   }
 
-  @Patch("/:email")
+  @Patch("/:id")
   updateUser(
-    @Param("email") userEmail: string,
+    @Param("id") userEmail: string,
     @Body() updateUserDto: UpdateUserDto
   ) {
     return this.authService.updateUser(userEmail, updateUserDto);

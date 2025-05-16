@@ -5,7 +5,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
 import * as bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
 import { JwtService } from "@nestjs/jwt";
 import { LoginUserDto } from "./dto/login-user.dto";
 import { Manager } from "src/managers/entities/manager.entity";
@@ -15,12 +14,17 @@ import { Employee } from "src/employees/entities/employee.entity";
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Employee) private employeeRepository: Repository<Employee>,
+    @InjectRepository(Employee)
+    private employeeRepository: Repository<Employee>,
     @InjectRepository(Manager) private managerRepository: Repository<Manager>,
     private jwtService: JwtService
   ) {}
 
   async registerEmployee(id: string, createUserDto: CreateUserDto) {
+    const roles = createUserDto.userRoles;
+    if (roles.includes("Admin") || roles.includes("Manager")) {
+      throw new UnauthorizedException("Invalido");
+    }
     createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
     const user = await this.userRepository.save(createUserDto);
     const employee = await this.employeeRepository.preload({
@@ -30,10 +34,14 @@ export class AuthService {
       throw new UnauthorizedException("Empleado no encontrado");
     }
     employee.user = user;
-    await this.employeeRepository.save(employee);
+    return this.employeeRepository.save(employee);
   }
 
-   async registerManager(id: string, createUserDto: CreateUserDto) {
+  async registerManager(id: string, createUserDto: CreateUserDto) {
+    const roles = createUserDto.userRoles;
+    if (roles.includes("Admin") || roles.includes("Employee")) {
+      throw new UnauthorizedException("Invalido");
+    }
     createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
     const user = await this.userRepository.save(createUserDto);
     const manager = await this.managerRepository.preload({
@@ -43,7 +51,7 @@ export class AuthService {
       throw new UnauthorizedException("Manager no encontrado");
     }
     manager.user = user;
-    await this.employeeRepository.save(manager);
+    await this.managerRepositoryt.save(manager);
   }
 
   async loginUser(loginUserDto: LoginUserDto) {
@@ -72,9 +80,12 @@ export class AuthService {
     return token;
   }
 
-  async updateUser(userEmail: string, updateUserDto: UpdateUserDto) {
+  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.userPassword) {
+      updateUserDto.userPassword = bcrypt.hashSync(updateUserDto.userPassword, 5);
+    }
     const newUserData = await this.userRepository.preload({
-      userEmail,
+      userId: id,
       ...updateUserDto,
     });
 
